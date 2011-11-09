@@ -177,8 +177,6 @@ public class DependencyInstallerMojo extends AbstractMojo {
 						artifactId, groupId, packaging, projectName,
 						projectUrl, version, licenses, null);
 
-				getLog().debug("Validating artifact : " + artifactId);
-
 				validate(model);
 
 				Dependency dep = createDependency(
@@ -190,17 +188,10 @@ public class DependencyInstallerMojo extends AbstractMojo {
 				File pomFile = null;
 				
 				try {
-					getLog().debug("Generating pom for: " + artifactId);
-
 					pomFile = generatePomFile(model, null);
-
-					getLog().debug("Creating artifact : " + artifactId);
 
 					artifact = createArtifact(
 							artifactId, groupId, packaging, pomFile, version);
-
-					getLog().debug(
-						"Installing artifact : " + artifact.getArtifactId());
 
 					installer.install(targetFile, artifact, localRepository);
 					
@@ -238,11 +229,11 @@ public class DependencyInstallerMojo extends AbstractMojo {
 					projArtifactId, projGroupId, "pom", generatedPomName,
 					null, generatedPomVersion, null, deps);
 
-			getLog().debug("Validating resulting pom model");
+			getLog().info("Validating resulting pom model \n");
 
 			validate(targetModel);
 
-			getLog().debug("Generating : " + generatedPomLocation);
+			getLog().info("Generating : " + generatedPomLocation);
 
 			File pom = generatePomFile(targetModel, generatedPomLocation);
 
