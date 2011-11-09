@@ -120,7 +120,13 @@ public class DependencyInstallerMojo extends AbstractMojo {
 			if ("library".equals(elementName)) {
 				libElmnt.detach();
 
-				String fullFileName = getText(libElmnt, "file-name", true);
+				String fullFileName = libElmnt.elementText("file-name");
+				String projectName = libElmnt.elementText("project-name");
+				
+				if (fullFileName == null || fullFileName.isEmpty()) {
+					throw new IllegalStateException(
+						"file-name of '" + projectName + "' must not be empty");
+				}
 				
 				String fileName = StringUtil.extractLast(fullFileName, "/");
 				String subDir = StringUtil.extractFirst(fullFileName, "/");
@@ -131,9 +137,8 @@ public class DependencyInstallerMojo extends AbstractMojo {
 					continue;
 				}
 				
-				String projectName = getText(libElmnt, "project-name", false);
-				String projectUrl = getText(libElmnt, "project-url", false);
-				String version = getText(libElmnt, "version", false);
+				String projectUrl = libElmnt.elementText("project-url");
+				String version = libElmnt.elementText("version");
 
 				if (version == null || version.isEmpty()) {
 					getLog().warn("Version of: " + fullFileName + " is missing");
@@ -378,25 +383,12 @@ public class DependencyInstallerMojo extends AbstractMojo {
 	private void getLicenses(List<License> licenses, Element licenseElem) {
 		License license = new License();
 
-		String licenceName = getText(licenseElem, "license-name", false);
-		String copyRight = getText(licenseElem, "copyright-notice", false);
+		String licenceName = licenseElem.elementText("license-name");
+		String copyRight = licenseElem.elementText("copyright-notice");
 
 		license.setName(licenceName);
 		license.setUrl(copyRight);
 		licenses.add(license);
-	}
-
-	private String getText(Element parent, String childName, boolean notEmpty) {
-		Element child = parent.element(childName);
-
-		String result = child != null ? child.getText().trim() : null;
-		
-		if (notEmpty && (result == null || result.isEmpty())) {
-			throw new IllegalStateException(
-				"file-name must not be empty");
-		}
-		
-		return result;
 	}
 
 	private void initClassLoader() throws Exception {
