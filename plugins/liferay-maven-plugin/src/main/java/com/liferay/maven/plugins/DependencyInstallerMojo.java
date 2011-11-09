@@ -59,12 +59,11 @@ import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PropsUtil;
 
 /**
- * Installs Liferay's third-party dependencies based on lib/versions.xml.
- * 
- * @see {@link #include}
- * @see {@link #libDirPath}
- * @see {@link #sourceVersionFile}
- * @see {@link #customLocalRepositoryPath}
+ * Installs 3rd-party libraries based on {@link #sourceVersionFile} located in 
+ * {@link #libDirPath} into {@link #customLocalRepositoryPath} or default local 
+ * maven repository. Only libraries that match regular expressions specified
+ * in {@link #include} element are used. Pom definition with corresponding 
+ * dependencies is generated into {@link #generatedPomLocation}
  * 
  * @author Jakub Liska
  * @goal install-dependencies
@@ -321,7 +320,7 @@ public class DependencyInstallerMojo extends AbstractMojo {
 
 		dep.setArtifactId(artifactId);
 		dep.setGroupId(groupId);
-		dep.setScope(scope);
+		dep.setScope(dependencyScope);
 		dep.setType(packaging);
 		dep.setVersion(version);
 
@@ -571,7 +570,7 @@ public class DependencyInstallerMojo extends AbstractMojo {
 	 * @parameter default-value="test"
 	 * @required
 	 */
-	private String scope;
+	private String dependencyScope;
 
 	/**
 	 * Notice that sub-directory in file-name is mandatory
